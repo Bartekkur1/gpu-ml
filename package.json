@@ -1,0 +1,32 @@
+{
+  "name": "gpu-ml",
+  "version": "1.0.0",
+  "description": "GPU accelerated ML",
+  "main": "index.js",
+  "engines": {
+    "node": "14.x"
+  },
+  "scripts": {
+    "start": "node build/index.js",
+    "solveXor": "ts-node ./src/solutions/xor.ts",
+    "start-ts": "ts-node ./src/index.ts",
+    "build": "tsc",
+    "prestart": "npm run build",
+    "test": "jest ./tests"
+  },
+  "author": "Bartlomiej Kurpanik",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^29.2.5",
+    "@types/node": "^18.11.18",
+    "@types/asciichart": "^1.5.6",
+    "jest": "^29.3.1",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "asciichart": "^1.5.25",
+    "gpu.js": "^2.16.0"
+  }
+}
