@@ -38,23 +38,6 @@ const creationTestCPU = (size: number) => {
   return CPU;
 };
 
-const creationTestGPU = (size: number) => {
-  const GPU: CreationTimer = {};
-  let start = Date.now();
-  math.createRandomMatrix(size, size);
-  GPU['rand'] = Date.now() - start;
-
-  start = Date.now();
-  math.createEmptyMatrix(size, size);
-  GPU['empt'] = Date.now() - start;
-
-  start = Date.now();
-  math.createIdentityMatrix(size);
-  GPU['iden'] = Date.now() - start;
-
-  return GPU;
-};
-
 const multiplicationResults: { [key: number]: { GPU: number, CPU: number } } = {};
 multiplicationResults[10] = multiplicationTest(10);
 multiplicationResults[100] = multiplicationTest(100);
@@ -71,11 +54,3 @@ creationResultsCPU[2000] = creationTestCPU(2000);
 creationResultsCPU[5000] = creationTestCPU(5000);
 console.log('CPU Creation test');
 console.table(creationResultsCPU);
-
-const creationResultsGPU: { [key: number]: CreationTimer } = [];
-creationResultsGPU[100] = creationTestGPU(100);
-creationResultsGPU[500] = creationTestGPU(500);
-creationResultsGPU[1000] = creationTestGPU(1000);
-creationResultsGPU[5000] = creationTestGPU(5000);
-console.log('GPU Creation test');
-console.table(creationResultsGPU);

@@ -4,7 +4,7 @@ export interface LayerConfiguration {
   inputSize: number;
   outputSize: number;
   activationLayer: ActivationLayer;
-  weightsInitialization: () => number;
+  weightsInitialization?: () => number;
 }
 
 export interface Layer {

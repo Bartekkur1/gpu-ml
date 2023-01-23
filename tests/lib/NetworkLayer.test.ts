@@ -5,7 +5,12 @@ import { SigmoidActivationLayer } from '../../src/lib/activation/Sigmoid';
 describe('Network Layer class tests', () => {
 
   test('Should be initialized with given size', () => {
-    const layer = new NetworkLayer(2, 3, SigmoidActivationLayer);
+    // const layer = new NetworkLayer(2, 3, SigmoidActivationLayer);
+    const layer = new NetworkLayer({
+      inputSize: 2,
+      outputSize: 3,
+      activationLayer: SigmoidActivationLayer
+    });
 
     expect(layer.weights.size).toStrictEqual({
       rows: 2,
@@ -21,7 +26,11 @@ describe('Network Layer class tests', () => {
   });
 
   test('Feedforward should multiply input times weight, add biases and pass values through activation function', () => {
-    const layer = new NetworkLayer(1, 2, SigmoidActivationLayer);
+    const layer = new NetworkLayer({
+      inputSize: 1,
+      outputSize: 2,
+      activationLayer: SigmoidActivationLayer
+    });
     // override default random generated values
     layer.weights = Matrix.createBySize(1, 2, () => 2);
     layer.biases = Matrix.createBySize(1, 2, () => -4);
