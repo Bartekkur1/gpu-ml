@@ -40,12 +40,12 @@ export class NeuralNetwork {
       }
       let mseRes = 0;
       for (let i = 0; i < dataSet.length; i++) {
-        const { expectedInput, input } = dataSet[i];
+        const { expectedOutput, input } = dataSet[i];
         let output = this.predict(input);
 
-        mseRes += mse(expectedInput, output);
+        mseRes += mse(expectedOutput, output);
 
-        let outputError = output.sub(expectedInput);
+        let outputError = output.sub(expectedOutput);
         for (const layer of this.layers.slice().reverse()) {
           outputError = layer.backwardPropagation(outputError, learningRate);
         }

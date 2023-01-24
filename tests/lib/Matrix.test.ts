@@ -254,6 +254,53 @@ describe('Matrix class tests', () => {
 
       expect(() => matrixA.mulEW(matrixB)).toThrowError('Invalid matrix size! 2x2 cant be multiplied element wise by 2x3');
     });
+
+    test('Should add matrix to matrix', () => {
+      const matrixA = new Matrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ]);
+      const matrixB = new Matrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ]);
+
+      expect(matrixA.add(matrixB).value).toStrictEqual([
+        [2, 4, 6],
+        [8, 10, 12],
+        [14, 16, 18]
+      ]);
+    });
+
+    test('Should expect same matrix size while adding them together', () => {
+      const matrixA = new Matrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ]);
+      const matrixB = new Matrix([
+        [1, 2],
+        [4, 5],
+      ]);
+
+      expect(() => matrixA.add(matrixB)).toThrowError('Invalid matrix size! 3x3 cant be added to 2x2');
+    });
+
+    test('Should add scalar into matrix', () => {
+      const matrixA = new Matrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ]);
+
+      expect(matrixA.add(10).value).toStrictEqual([
+        [11, 12, 13],
+        [14, 15, 16],
+        [17, 18, 19]
+      ]);
+    });
   });
 
   describe('Should correctly multiply matrixes', () => {
@@ -342,6 +389,23 @@ describe('Matrix class tests', () => {
       });
 
       expect(matrixC.value).toStrictEqual([[50], [122]]);
+    });
+
+    test('Element wise', () => {
+      const matrixA = new Matrix([
+        [2, 3, 4],
+        [5, 6, 7]
+      ]);
+
+      const matrixB = new Matrix([
+        [2, 2, 2],
+        [2, 2, 3]
+      ]);
+
+      expect(matrixA.mulEW(matrixB).value).toStrictEqual([
+        [4, 6, 8],
+        [10, 12, 21]
+      ]);
     });
   });
 });

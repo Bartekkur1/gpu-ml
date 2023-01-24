@@ -89,5 +89,60 @@ describe('GPU Math tests', () => {
 
       expect(gpuCalculated.value).toStrictEqual(matrixC.value);
     });
+
+    test('Element wise', () => {
+      const matrixA = new Matrix([
+        [2, 3, 4],
+        [5, 6, 7]
+      ]);
+
+      const matrixB = new Matrix([
+        [2, 2, 2],
+        [2, 2, 3]
+      ]);
+
+      expect(math.matrixMulEW(matrixA, matrixB).value).toStrictEqual([
+        [4, 6, 8],
+        [10, 12, 21]
+      ]);
+    });
+  });
+
+  describe('Should correctly execute matrix addition', () => {
+    test('Should add two matrixes', () => {
+      const matrixA = new Matrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ]);
+      const matrixB = new Matrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ]);
+
+      const expectedResult = matrixA.add(matrixB);
+      const gpuResult = math.matrixSum(matrixA, matrixB);
+      expect(gpuResult).toStrictEqual(expectedResult);
+    });
+    test('Should fail to add two matrixes of different size', () => {
+      const matrixA = Matrix.createBySize(3, 3);
+      const matrixB = Matrix.createBySize(2, 2);
+
+      expect(() => math.matrixSum(matrixA, matrixB)).toThrowError('Invalid matrix size! 3x3 cant be added to 2x2');
+    });
+    test('Should add scalar into matrix', () => {
+      const matrixA = new Matrix([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ]);
+
+      expect(math.matrixSum(matrixA, 10).value).toStrictEqual([
+        [11, 12, 13],
+        [14, 15, 16],
+        [17, 18, 19]
+      ]);
+    });
   });
 });

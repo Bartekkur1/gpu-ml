@@ -19,5 +19,5 @@ export interface ActivationLayer {
 
 export interface DataSet {
   input: Matrix;
-  expectedInput: Matrix;
+  expectedOutput: Matrix;
 }

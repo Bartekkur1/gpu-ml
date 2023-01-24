@@ -12,7 +12,8 @@
     "start-ts": "ts-node ./src/index.ts",
     "build": "tsc",
     "prestart": "npm run build",
-    "test": "jest ./tests"
+    "test": "jest ./tests",
+    "test-performance": "ts-node ./tests/performance.ts"
   },
   "author": "Bartlomiej Kurpanik",
   "license": "ISC",
