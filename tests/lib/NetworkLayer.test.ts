@@ -1,15 +1,12 @@
 import Matrix from '../../src/lib/Matrix';
 import { NetworkLayer } from '../../src/lib/NetworkLayer';
 import { SigmoidActivationLayer } from '../../src/lib/activation/Sigmoid';
-import GpuMath from '../../src/lib/GpuMath';
-
-const gpu = new GpuMath();
 
 describe('Network Layer class tests', () => {
 
   test('Should be initialized with given size', () => {
     // const layer = new NetworkLayer(2, 3, SigmoidActivationLayer);
-    const layer = new NetworkLayer(gpu, {
+    const layer = new NetworkLayer({
       inputSize: 2,
       outputSize: 3,
       activationLayer: SigmoidActivationLayer
@@ -29,7 +26,7 @@ describe('Network Layer class tests', () => {
   });
 
   test('Feedforward should multiply input times weight, add biases and pass values through activation function', () => {
-    const layer = new NetworkLayer(gpu, {
+    const layer = new NetworkLayer({
       inputSize: 1,
       outputSize: 2,
       activationLayer: SigmoidActivationLayer

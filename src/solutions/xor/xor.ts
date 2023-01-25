@@ -1,24 +1,22 @@
-import { NetworkLayer } from "../lib/NetworkLayer";
-import { NeuralNetwork } from "../lib/NeuralNetwork";
-import Matrix from "../lib/Matrix";
-import { TanhActivationLayer } from "../lib/activation/Tanh";
-// import { SigmoidActivationLayer } from "../lib/activation/Sigmoid";
-import { DataSet } from "../lib/Types";
-import { XavierInitialization } from "../lib/initialization/xavier";
-import GpuMath from "../lib/GpuMath";
+import { NetworkLayer } from "../../lib/NetworkLayer";
+import { NeuralNetwork } from "../../lib/NeuralNetwork";
+import Matrix from "../../lib/Matrix";
+import { TanhActivationLayer } from "../../lib/activation/Tanh";
+import { SigmoidActivationLayer } from "../../lib/activation/Sigmoid";
+import { DataSet } from "../../lib/Types";
+import { XavierInitialization } from "../../lib/initialization/xavier";
 
-const activationLayer = TanhActivationLayer;
-// const activationLayer = SigmoidActivationLayer;
+// const activationLayer = TanhActivationLayer;
+const activationLayer = SigmoidActivationLayer;
 
-const gpuMath = new GpuMath();
 const network = new NeuralNetwork([
-  new NetworkLayer(gpuMath, {
+  new NetworkLayer({
     inputSize: 2,
     outputSize: 3,
     activationLayer,
     weightsInitialization: XavierInitialization(2)
   }),
-  new NetworkLayer(gpuMath, {
+  new NetworkLayer({
     inputSize: 3,
     outputSize: 1,
     activationLayer,
@@ -45,7 +43,11 @@ const dataSet: DataSet[] = [
   },
 ]
 
+network.load('xor');
+
 network.fit(dataSet, 10000, 0.1, true);
+
+network.save('xor');
 
 for (let set of dataSet) {
   const { input } = set;

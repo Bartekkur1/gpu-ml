@@ -1,4 +1,3 @@
-import GpuMath from "./GpuMath";
 import Matrix from "./Matrix";
 import { ActivationLayer, Layer, LayerConfiguration } from "./Types";
 
@@ -8,10 +7,8 @@ export class NetworkLayer implements Layer {
   private input: Matrix = new Matrix();
   private output: Matrix = new Matrix();
   private activationLayer: ActivationLayer;
-  private gpu: GpuMath;
 
-  constructor(gpu: GpuMath, config: LayerConfiguration) {
-    this.gpu = gpu;
+  constructor(config: LayerConfiguration) {
     if (config.weightsInitialization) {
       this.weights = Matrix.createBySize(config.inputSize, config.outputSize, config.weightsInitialization);
       this.biases = Matrix.createBySize(1, config.outputSize, config.weightsInitialization);

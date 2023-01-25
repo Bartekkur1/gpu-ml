@@ -110,20 +110,18 @@ describe('GPU Math tests', () => {
 
   describe('Should correctly execute matrix addition', () => {
     test('Should add two matrixes', () => {
-      const matrixA = new Matrix([
+      const getTestMatrix = () => new Matrix([
         [1, 2, 3],
         [4, 5, 6],
         [7, 8, 9]
       ]);
-      const matrixB = new Matrix([
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-      ]);
+      const matrixA = getTestMatrix();
+      const matrixB = getTestMatrix();
+      const matrixC = getTestMatrix();
 
-      const expectedResult = matrixA.add(matrixB);
-      const gpuResult = math.matrixSum(matrixA, matrixB);
-      expect(gpuResult).toStrictEqual(expectedResult);
+      matrixA.add(matrixB);
+      const gpuResult = math.matrixSum(matrixB, matrixC);
+      expect(gpuResult).toStrictEqual(matrixA);
     });
     test('Should fail to add two matrixes of different size', () => {
       const matrixA = Matrix.createBySize(3, 3);

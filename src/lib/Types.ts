@@ -8,6 +8,8 @@ export interface LayerConfiguration {
 }
 
 export interface Layer {
+  weights: Matrix;
+  biases: Matrix;
   feedForward: (input: Matrix) => Matrix;
   backwardPropagation: (outputError: Matrix, learningRate: number) => Matrix;
 }

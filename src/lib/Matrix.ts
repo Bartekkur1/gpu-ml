@@ -1,5 +1,5 @@
 type MatrixValue = Array<Array<number>>;
-type GenerateValue = () => number;
+type GenerateValue = (x: number, y: number) => number;
 
 export interface MatrixSize {
   rows: number;
@@ -38,7 +38,7 @@ export default class Matrix {
     for (let r = 0; r < rows; r++) {
       let row = [];
       for (let c = 0; c < cols; c++) {
-        row.push(getValue ? getValue() : 0);
+        row.push(getValue ? getValue(r, c) : 0);
       }
       value[r] = row;
     }
@@ -56,7 +56,7 @@ export default class Matrix {
   }
 
   public static createRandom(rows: number, cols: number): Matrix {
-    return this.createBySize(rows, cols, () => Math.random());
+    return this.createBySize(rows, cols, () => (Math.random() * 2) - 1);
   }
 
   public getSingularValue(): number {
@@ -72,27 +72,18 @@ export default class Matrix {
   }
 
   public transpose(): Matrix {
-    return Matrix.iterateNew(this.size.cols, this.size.rows, (x, y) => this.getValue(y, x));
-  }
-
-  private argInRange(row: number, col: number) {
-    if (row > this.size.rows || col > this.size.cols) {
-      throw new Error(`Given position is invalid! Given: ${row}, ${col} size is: ${this.size.rows}, ${this.size.cols}`);
-    }
+    return Matrix.createBySize(this.size.cols, this.size.rows, (x, y) => this.value[y][x]);
   }
 
   public getRow(row: number): Array<number> {
-    this.argInRange(row, 0);
     return this.value[row - 1];
   }
 
   public getColumn(col: number): Array<number> {
-    this.argInRange(0, col);
     return this.value.flatMap(e => e[col - 1]);
   }
 
   public getValue(row: number, col: number): number {
-    this.argInRange(row, col);
     return this.value[row - 1][col - 1];
   }
 
@@ -101,22 +92,23 @@ export default class Matrix {
       throw new Error(`Invalid matrix size! ${this.size.rows}x${this.size.cols} cant be multiplied element wise by ${matrixB.size.rows}x${matrixB.size.cols}`);
     }
     return Matrix.iterateNew(this.size.rows, this.size.cols, (x, y) => this.getValue(x, y) * matrixB.getValue(x, y));
+    // return Matrix.createBySize(this.size.rows, this.size.cols, (x, y) => this.value[x][y] * matrixB.value[x][y]);
   }
 
   public mul(matrixB: Matrix | number): Matrix {
     if (typeof matrixB === 'number') {
-      return Matrix.iterateNew(this.size.rows, this.size.cols, (x, y) => this.getValue(x, y) * matrixB);
+      return Matrix.createBySize(this.size.rows, this.size.cols, (x, y) => this.value[x][y] * matrixB);
     } else {
       if (this.size.cols !== matrixB.size.rows) {
         throw new Error(`Invalid matrix size! ${this.size.cols} !== ${matrixB.size.rows}`);
       }
-      return Matrix.iterateNew(this.size.rows, matrixB.size.cols, (x, y) => {
+      return Matrix.createBySize(this.size.rows, matrixB.size.cols, (x, y) => {
         let sum = 0;
-        for (let i = 1; i <= this.size.cols; i++) {
-          sum += this.getValue(x, i) * matrixB.getValue(i, y);
+        for (let i = 0; i < this.size.cols; i++) {
+          sum += this.value[x][i] * matrixB.value[i][y];
         }
         return sum;
-      }, this.size.rows, matrixB.size.cols);
+      });
     }
   }
 

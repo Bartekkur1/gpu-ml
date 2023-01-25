@@ -5,7 +5,7 @@ Node js based machine learning library that uses GPU to accelerate matrix comput
 
 When I noticed how much progress library gpu.js did since last time I used it, I decided to give it another try.
 
-This project was created for fun and research. Personally the best approach to learn something is to build it up from the ground.
+This project was created for fun and research. Personally I think the best approach to learn something is to build it up from the ground up.
 
 I know there are many ML frameworks, cool. Use them if you want.
 

@@ -3,9 +3,12 @@ import Matrix from "./Matrix";
 import { DataSet, Layer } from "./Types";
 import { plot } from "asciichart";
 import { scaleArray } from "./Util";
+import * as fs from 'fs';
+
+import { SingleBar, Presets } from 'cli-progress';
 
 export class NeuralNetwork {
-  private layers: Layer[];
+  public layers: Layer[];
 
   constructor(layers?: Layer[]) {
     this.layers = layers || [];
@@ -33,29 +36,39 @@ export class NeuralNetwork {
     const start = Date.now();
     let flatError = false;
     let iterations = 0;
+
+    const progressBar = new SingleBar({
+      format: 'Learning... [{bar}] {percentage}% | ETA: {eta}s | {value}/{total} records'
+    }, Presets.shades_classic);
+    progressBar.start(dataSet.length * epochs, 0);
+
     for (let epoch = 1; epoch <= epochs; epoch++) {
-      iterations++;
+      let epochLoss = 0;
+
       if (flatError) {
         break;
       }
-      let mseRes = 0;
+
       for (let i = 0; i < dataSet.length; i++) {
+        iterations++;
+
         const { expectedOutput, input } = dataSet[i];
         let output = this.predict(input);
 
-        mseRes += mse(expectedOutput, output);
+        let mseRes = mse(expectedOutput, output);
+        epochLoss += mseRes;
 
         let outputError = output.sub(expectedOutput);
         for (const layer of this.layers.slice().reverse()) {
           outputError = layer.backwardPropagation(outputError, learningRate);
         }
+        progressBar.increment();
       }
-      const lossToSize = mseRes / dataSet.length;
-      loss.push(lossToSize);
-      if (lossToSize <= 0.005) {
-        flatError = true;
-      }
+
+      loss.push(epochLoss / dataSet.length);
     }
+
+    progressBar.stop();
 
     if (debug) {
       console.log(`Flat loss after ${iterations} iterations!`);
@@ -64,4 +77,28 @@ export class NeuralNetwork {
       console.log(plot(scaleArray(loss, 100), { height: 20 }));
     }
   }
+
+  public save(name: string) {
+    const layersData = this.layers.map(layer => ({
+      weights: layer.weights.value,
+      biases: layer.biases.value
+    }));
+
+    fs.writeFileSync(`./cache/${name}.json`, JSON.stringify(layersData), { encoding: 'utf-8' });
+  }
+
+  public load(name: string) {
+    if (!fs.existsSync(`./cache/${name}.json`)) {
+      console.log('Failed to load neural network cache!');
+      return;
+    }
+
+    const layersData = JSON.parse(fs.readFileSync(`./cache/${name}.json`, { encoding: "utf-8" }));
+    for (let i = 0; i < layersData.length; i++) {
+      this.layers[i].weights = new Matrix(layersData[i].weights);
+      this.layers[i].biases = new Matrix(layersData[i].biases);
+    }
+    console.log('Loaded neural network cache!');
+  }
+
 }
