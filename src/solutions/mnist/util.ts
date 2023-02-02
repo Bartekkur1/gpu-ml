@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import Matrix from "../../lib/Matrix";
 import { DataSet } from '../../lib/Types';
 
-export const readDataSet = (fileName: string): DataSet[] => {
+export const readDataSet = (fileName: string, sizeLimit: number, normalizeMax: number): DataSet[] => {
   const dataSet: DataSet[] = [];
   const start = Date.now();
 
@@ -18,11 +18,15 @@ export const readDataSet = (fileName: string): DataSet[] => {
 
   const lines = file.split(/\n/).slice(1).slice(0, -1);
   for (const line of lines) {
+    if (dataSet.length >= sizeLimit) {
+      break;
+    }
+
     const input = line.split(',').map(el => Number(el));
     const expectedOutput = input.shift();
 
     dataSet.push({
-      input: new Matrix([input]),
+      input: new Matrix([input.map(e => e / normalizeMax)]),
       expectedOutput: mapExpectedOutput(expectedOutput)
     });
   }
