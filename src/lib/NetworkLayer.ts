@@ -1,5 +1,6 @@
-import Matrix from "./Matrix";
 import { ActivationLayer, Layer, LayerConfiguration } from "./Types";
+import { RandomInitialization } from "./initialization/Random";
+import Matrix from "./Matrix";
 
 export class NetworkLayer implements Layer {
   public weights: Matrix;
@@ -9,16 +10,12 @@ export class NetworkLayer implements Layer {
   private activationLayer: ActivationLayer;
 
   constructor(config: LayerConfiguration) {
-    if (config.weightsInitialization) {
-      this.weights = Matrix.createBySize(config.inputSize, config.outputSize, config.weightsInitialization);
-      this.biases = Matrix.createBySize(1, config.outputSize, config.weightsInitialization);
-    } else {
-      this.weights = Matrix.createRandom(config.inputSize, config.outputSize);
-      this.biases = Matrix.createRandom(1, config.outputSize);
-    }
+    const initFunc = config.weightsInitialization || RandomInitialization
+    this.weights = Matrix.createBySize(config.inputSize, config.outputSize, initFunc);
+    this.biases = Matrix.createBySize(1, config.outputSize, initFunc);
     this.activationLayer = config.activationLayer;
-  }
 
+  }
   public feedForward(input: Matrix) {
     this.input = input;
     const weightedOutput = input.mul(this.weights).add(this.biases);

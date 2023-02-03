@@ -23,3 +23,13 @@ export interface DataSet {
   input: Matrix;
   expectedOutput: Matrix;
 }
+
+export type LossFunction = (output: Matrix, expectedOutput: Matrix) => Matrix;
+
+export interface NeuralNetworkConfiguration {
+  lossFunction: LossFunction;
+  stopFunction?: StopFunction;
+  networkCache?: string;
+}
+
+export type StopFunction = (epoch: number, loss: number) => boolean;

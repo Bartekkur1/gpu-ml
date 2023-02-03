@@ -1,53 +1,32 @@
 import { NetworkLayer } from "../../lib/NetworkLayer";
 import { NeuralNetwork } from "../../lib/NeuralNetwork";
-import Matrix from "../../lib/Matrix";
-import { TanhActivationLayer } from "../../lib/activation/Tanh";
 import { SigmoidActivationLayer } from "../../lib/activation/Sigmoid";
-import { DataSet } from "../../lib/Types";
 import { XavierInitialization } from "../../lib/initialization/xavier";
+import { ZeroInitialization } from "../../lib/initialization/Zero";
+import { SimpleLoss } from "../../lib/loss/Sub";
+import { CreateSimpleStop } from "../../lib/stop/SimpleStop";
+import { dataSet } from "./data";
 
-// const activationLayer = TanhActivationLayer;
-const activationLayer = SigmoidActivationLayer;
-
-const network = new NeuralNetwork([
+const network = new NeuralNetwork({
+  lossFunction: SimpleLoss,
+  stopFunction: CreateSimpleStop(100, 0.005),
+  networkCache: 'xor'
+}, [
   new NetworkLayer({
     inputSize: 2,
     outputSize: 3,
-    activationLayer,
-    weightsInitialization: XavierInitialization(2)
+    activationLayer: SigmoidActivationLayer,
+    weightsInitialization: XavierInitialization(3)
   }),
   new NetworkLayer({
     inputSize: 3,
     outputSize: 1,
-    activationLayer,
-    weightsInitialization: XavierInitialization(3)
+    activationLayer: SigmoidActivationLayer,
+    weightsInitialization: ZeroInitialization
   })
 ]);
 
-const dataSet: DataSet[] = [
-  {
-    input: new Matrix([[0, 0]]),
-    expectedOutput: new Matrix([[0]])
-  },
-  {
-    input: new Matrix([[1, 0]]),
-    expectedOutput: new Matrix([[1]])
-  },
-  {
-    input: new Matrix([[0, 1]]),
-    expectedOutput: new Matrix([[1]])
-  },
-  {
-    input: new Matrix([[1, 1]]),
-    expectedOutput: new Matrix([[0]])
-  },
-]
-
-network.load('xor');
-
 network.fit(dataSet, 10000, 0.1, true);
-
-network.save('xor');
 
 for (let set of dataSet) {
   const { input } = set;

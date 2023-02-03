@@ -1,6 +1,6 @@
 import { mse } from "./loss/Mse";
 import Matrix from "./Matrix";
-import { DataSet, Layer } from "./Types";
+import { DataSet, Layer, NeuralNetworkConfiguration } from "./Types";
 import * as fs from 'fs';
 
 import { SingleBar, Presets } from 'cli-progress';
@@ -9,9 +9,15 @@ import { scaleArray } from "./Util";
 
 export class NeuralNetwork {
   public layers: Layer[];
+  private configuration: NeuralNetworkConfiguration;
 
-  constructor(layers?: Layer[]) {
+  constructor(configuration: NeuralNetworkConfiguration, layers?: Layer[]) {
+    this.configuration = configuration;
     this.layers = layers || [];
+
+    if (this.configuration.networkCache) {
+      this.load(this.configuration.networkCache);
+    }
   }
 
   public addLayer(layer: Layer) {
@@ -37,7 +43,7 @@ export class NeuralNetwork {
     let iterations = 0;
 
     const progressBar = new SingleBar({
-      format: 'Learning... [{bar}] {percentage}% | ETA: {eta}s | {value}/{total} records'
+      format: 'Learning... [{bar}] {percentage}% | ETA: {eta}s | {value}/{total} iterations'
     }, Presets.shades_classic);
     progressBar.start(dataSet.length * epochs, 0);
 
@@ -53,7 +59,8 @@ export class NeuralNetwork {
         let mseRes = mse(expectedOutput, output);
         epochLoss += mseRes;
 
-        let outputError = output.sub(expectedOutput);
+        // let outputError = output.sub(expectedOutput);
+        let outputError = this.configuration.lossFunction(output, expectedOutput);
         for (const layer of this.layers.slice().reverse()) {
           outputError = layer.backwardPropagation(outputError, learningRate);
         }
@@ -62,11 +69,11 @@ export class NeuralNetwork {
       }
 
       const meanLoss = epochLoss / dataSet.length;
-      if (epoch > 25 && meanLoss < 0.05) {
+      if (this.configuration.stopFunction && this.configuration.stopFunction(epoch, meanLoss)) {
         console.log('Flat loss found');
         break;
       }
-      loss.push(epochLoss / dataSet.length);
+      loss.push(meanLoss);
     }
 
     progressBar.stop();
@@ -78,13 +85,17 @@ export class NeuralNetwork {
       console.log('Loss function:');
       // TODO: fix that func
       // const scaledLossArr = scaleArray(loss, 60);
-      console.log(plot(loss.slice(-70), {
+      console.log(plot(scaleArray(loss, 100), {
         height: 25
       }));
     }
+
+    if (this.configuration.networkCache) {
+      this.save(this.configuration.networkCache);
+    }
   }
 
-  public save(name: string) {
+  private save(name: string) {
     const layersData = this.layers.map(layer => ({
       weights: layer.weights.value,
       biases: layer.biases.value
@@ -93,7 +104,7 @@ export class NeuralNetwork {
     fs.writeFileSync(`./cache/${name}.json`, JSON.stringify(layersData), { encoding: 'utf-8' });
   }
 
-  public load(name: string) {
+  private load(name: string) {
     if (!fs.existsSync(`./cache/${name}.json`)) {
       console.log('Failed to load neural network cache!');
       return;

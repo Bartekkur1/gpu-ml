@@ -1,37 +1,43 @@
 import { NetworkLayer } from "../../lib/NetworkLayer";
 import { NeuralNetwork } from "../../lib/NeuralNetwork";
 import { XavierInitialization } from "../../lib/initialization/xavier";
-import { drawInput, getHighestIndex, readDataSet } from "./util";
+import { getHighestIndex, readDataSet } from "./util";
 import { SigmoidActivationLayer } from "../../lib/activation/Sigmoid";
 import { ZeroInitialization } from "../../lib/initialization/Zero";
 import { SoftmaxActivationLayer } from "../../lib/activation/Softmax";
+import { SimpleLoss } from "../../lib/loss/Sub";
+import { CreateSimpleStop } from "../../lib/stop/SimpleStop";
 
 // Dataset can be found here: https://www.kaggle.com/competitions/digit-recognizer/overview
 // Unzip it and move it to this directory
-const trainingSet = readDataSet('./src/solutions/mnist/train.csv', 256, 256);
-// const testSet = readDataSet('./src/solutions/mnist/test.csv');
+const trainingSet = readDataSet({
+  fileName: './src/solutions/mnist/train.csv',
+  pickRandom: true,
+  normalizeMax: 256,
+  sizeLimit: 1024
+});
 
-const network = new NeuralNetwork([
+const network = new NeuralNetwork({
+  lossFunction: SimpleLoss,
+  networkCache: 'mnist'
+}, [
   new NetworkLayer({
     inputSize: 784,
-    outputSize: 512,
-    weightsInitialization: XavierInitialization(512),
-    activationLayer: SigmoidActivationLayer
-  }),
-  new NetworkLayer({
-    inputSize: 512,
     outputSize: 10,
-    weightsInitialization: ZeroInitialization,
+    weightsInitialization: XavierInitialization(784),
     activationLayer: SoftmaxActivationLayer
   })
 ]);
 
-network.load('mnist');
 network.fit(trainingSet, 60, 0.1, true);
-network.save('mnist');
+
+const testSet = readDataSet({
+  fileName: './src/solutions/mnist/train.csv',
+  normalizeMax: 256
+});
 
 let errorCount = 0;
-for (const test of trainingSet) {
+for (const test of testSet) {
   const prediction = network.predict(test.input);
   const numPrediction = getHighestIndex(prediction);
   const expectedNum = getHighestIndex(test.expectedOutput);
@@ -40,6 +46,6 @@ for (const test of trainingSet) {
   }
 }
 
-const accuracy = ((trainingSet.length - errorCount) / trainingSet.length) * 100;
+console.log(`${errorCount} errors on set of ${testSet.length} records`);
+const accuracy = ((testSet.length - errorCount) / testSet.length) * 100;
 console.log(`Accuracy is: ${accuracy}%`);
-
