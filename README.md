@@ -48,6 +48,6 @@ CPU Creation test (in ms)
 
 ## There are some ready solutions (WIP)
 
-For example there is a ready version of XOR. You can run it by running `npm run solveXor`.
+For example there is a ready version of XOR and mnist (but you have to download your own data set, link is in solution). You can run it by running `npm run solve-xor` or `npm run solve-mnist`.
 
 I didn't use gpu computation for this one because its too simple, creating GPU kernels is too time consuming
