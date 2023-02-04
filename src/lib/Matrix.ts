@@ -91,7 +91,7 @@ export default class Matrix {
     if (this.size.cols !== matrixB.size.cols || this.size.rows !== matrixB.size.rows) {
       throw new Error(`Invalid matrix size! ${this.size.rows}x${this.size.cols} cant be multiplied element wise by ${matrixB.size.rows}x${matrixB.size.cols}`);
     }
-    return Matrix.iterateNew(this.size.rows, this.size.cols, (x, y) => this.getValue(x, y) * matrixB.getValue(x, y));
+    return Matrix.createBySize(this.size.rows, this.size.cols, (x, y) => this.value[x][y] * matrixB.value[x][y]);
   }
 
   public normalize(max: number) {

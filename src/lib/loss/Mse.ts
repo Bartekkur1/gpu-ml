@@ -1,12 +1,12 @@
 import Matrix from "../Matrix";
 
-export const mse = (input: Matrix, predicted: Matrix): number => {
-  const se = predicted.sub(input).pow(2);//.div(2);
+export const mse = (output: Matrix, predictedOutput: Matrix): number => {
+  const se = predictedOutput.sub(output).pow(2);//.div(2);
   const mean = se.value[0].reduce((prev, next) => {
     prev += next;
     return prev;
   }, 0);
-  return mean;
+  return mean / se.value[0].length;
 };
 
 export const msePrime = (input: Matrix, predicted: Matrix): Matrix => {

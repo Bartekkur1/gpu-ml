@@ -9,7 +9,7 @@ import { dataSet } from "./data";
 
 const network = new NeuralNetwork({
   lossFunction: SimpleLoss,
-  stopFunction: CreateSimpleStop(100, 0.005),
+  stopFunction: CreateSimpleStop(100, 0.01),
   networkCache: 'xor'
 }, [
   new NetworkLayer({
@@ -26,7 +26,7 @@ const network = new NeuralNetwork({
   })
 ]);
 
-network.fit(dataSet, 10000, 0.1, true);
+network.fit(dataSet, 100, 0.1, true);
 
 for (let set of dataSet) {
   const { input } = set;

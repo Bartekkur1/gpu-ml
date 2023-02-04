@@ -20,6 +20,12 @@ const generateRandomIndexes = (amount: number, max: number) => {
   return randIndexes;
 };
 
+const mapExpectedOutput = (output: number) => {
+  const expectedOutput = Matrix.createBySize(1, 10);
+  expectedOutput.value[0][output] += 1
+  return expectedOutput;
+};
+
 export const readDataSet = ({ fileName, sizeLimit, normalizeMax, pickRandom }: ReadConfig): DataSet[] => {
   const dataSet: DataSet[] = [];
   const start = Date.now();
@@ -27,12 +33,6 @@ export const readDataSet = ({ fileName, sizeLimit, normalizeMax, pickRandom }: R
   const file = fs.readFileSync(fileName, {
     encoding: 'utf-8'
   });
-
-  const mapExpectedOutput = (output: number) => {
-    const expectedOutput = Matrix.createBySize(1, 10);
-    expectedOutput.value[0][output] += 1
-    return expectedOutput;
-  };
 
   let lines = file.split(/\n/).slice(1).slice(0, -1);
   if (pickRandom && sizeLimit) {
@@ -54,6 +54,29 @@ export const readDataSet = ({ fileName, sizeLimit, normalizeMax, pickRandom }: R
   }
 
   console.log(`Loaded dataset ${fileName} ${dataSet.length} records in ${Date.now() - start}ms`);
+  return dataSet;
+};
+
+export const readTrainDataSet = ({ fileName, normalizeMax }: ReadConfig): DataSet[] => {
+  const dataSet: DataSet[] = [];
+  const start = Date.now();
+
+  const file = fs.readFileSync(fileName, {
+    encoding: 'utf-8'
+  });
+
+  let lines = file.split(/\n/).slice(1).slice(0, -1);
+
+  for (const line of lines) {
+    const input = line.split(',').map(el => Number(el));
+
+    dataSet.push({
+      input: new Matrix([input.map(e => normalizeMax ? e / normalizeMax : e)]),
+      expectedOutput: undefined
+    });
+  }
+
+  console.log(`Loaded test dataset ${fileName} ${dataSet.length} records in ${Date.now() - start}ms`);
   return dataSet;
 };
 
