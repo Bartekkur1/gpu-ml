@@ -8,9 +8,7 @@
   },
   "scripts": {
     "start": "node build/index.js",
-    "solve-xor": "ts-node ./src/solutions/xor/xor.ts",
-    "solve-mnist": "ts-node ./src/solutions/mnist/mnist.ts",
-    "solve-titanic": "ts-node ./src/solutions/spaceship-titanic/solution.ts",
+    "run-model": "ts-node ./src/solutions/$model/index.ts",
     "start-ts": "ts-node ./src/index.ts",
     "build": "tsc",
     "prestart": "npm run build",
