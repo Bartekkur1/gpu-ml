@@ -55,7 +55,7 @@ export class NeuralNetwork {
       }
 
       const meanLoss = epochLoss / dataSet.length;
-      console.log(`Epoch ${epoch} mean loss: ${meanLoss} improvement: ${meanLoss - prevMeanLoss} time: ${Date.now() - epochStart}`);
+      console.log(`Epoch ${epoch} \t mean loss: ${meanLoss} \t improvement: ${meanLoss - prevMeanLoss} \t time: ${Date.now() - epochStart}`);
       prevMeanLoss = meanLoss;
       if (this.configuration.stopFunction && this.configuration.stopFunction(epoch, meanLoss)) {
         console.log('Flat loss found');
